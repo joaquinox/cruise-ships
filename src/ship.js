@@ -4,7 +4,7 @@ function Ship(port) {
 }
 
 Ship.prototype.setSail = function setSail() {
-  this.currentPort = !true;
+  this.currentPort = false;
 };
 
 Ship.prototype.dock = function dock(port) {
