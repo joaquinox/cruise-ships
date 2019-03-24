@@ -1,33 +1,35 @@
 const Port = require('../src/port.js');
 
 describe('Port', () => {
-it('can be instantiated', () => {
+  let titanic;
+  let mayflower;
+  let dover;
+
+  beforeEach(() => {
+    dover = new Port('Dover');
+    titanic = { name: 'ship 0' };
+    mayflower = { name: 'ship 1' };
+  });
+
+  it('can be instantiated', () => {
     expect(new Port()).toBeInstanceOf(Object);
   });
 
-it('Port has a name property', () => {
-    const port = new Port('Dover');
-    expect(port.name).toBe('Dover');
+  it('Port has a name property', () => {
+    expect(dover.name).toBe('Dover');
   });
 
-it('addShip', () => {
-    const port = new Port('Dover');
-    const ship = {};
+  it('addShip', () => {
+    dover.addShip(titanic);
 
-    port.addShip(ship);
-
-    expect(port.ships).toContain(ship);
+    expect(dover.ships).toContain(titanic);
   });
 
-it('removeShip', () => {
-    const port = new Port('Dover');
-    const ship = {};
-    const ship1 = {};
+  it('removeShip', () => {
+    dover.addShip(titanic);
+    dover.addShip(mayflower);
+    dover.removeShip(mayflower);
 
-    port.addShip(ship);
-    port.addShip(ship1);
-    port.removeShip(ship1);
-
-    expect(port.ships).toEqual([ship]);
+    expect(dover.ships).toEqual([titanic]);
   });
 });

@@ -1,46 +1,62 @@
 /* globals describe it expect */
 const Ship = require('../src/ship.js');
-const Port = require('../src/port.js');
-const Itinerary = require('../src/itinerary.js');
 
 
-describe('Ship', () => {
-it('can be instantiated', () => {
-    expect(new Ship()).toBeInstanceOf(Object);
+describe('with ports and an itinerary', () => {
+  let ship;
+  let dover;
+  let calais;
+  let itinerary;
+
+  beforeEach(() => {
+    const port = {
+      removeShip: jest.fn(),
+      addShip: jest.fn(),
+    };
+
+    dover = {
+      ...port,
+      name: 'Dover',
+      ships: [],
+    };
+
+    calais = {
+      ...port,
+      name: 'Calais',
+      ships: [],
+    };
+
+    itinerary = {
+      ports: [dover, calais],
+    };
+
+    ship = new Ship(itinerary);
   });
 
-it('has a starting port', () => {
-    const dover = new Port('Dover');
-    const ship = new Ship(dover);
-    expect(ship.currentPort).toBe(dover);
+  it('can be instantiated', () => {
+    expect(new Ship(itinerary)).toBeInstanceOf(Object);
   });
 
-it('gets added to port on instantiation', () => {
-    const dover = new Port('Dover');
-    const itinerary = new Itinerary([dover]);
-    const ship = new Ship(itinerary);
-
-    expect(dover.ships).toContain(ship);
+  it('has a starting port', () => {
+    expect(ship.currentPort).toEqual(dover);
   });
-});
 
-describe('setSail', () => {
-it('ship can set sail', () => {
-    const dover = new Port('Dover');
-    const ship = new Ship(dover);
+  it('gets added to port on instantiation', () => {
+    expect(dover.addShip).toHaveBeenCalledWith(ship);
+  });
+
+  it('ship can set sail', () => {
     ship.setSail();
+
     expect(ship.currentPort).toBeFalsy();
+    expect(dover.removeShip).toHaveBeenCalledWith(ship);
   });
-});
 
-describe('dock', () => {
-it('ship can dock at a different port', () => {
-    const dover = new Port('Dover');
-    const ship = new Ship(dover);
+  it('ship can dock at a different port', () => {
+    ship.setSail();
+    ship.dock();
 
-    const calais = new Port('Calais');
-    ship.dock(calais);
-
-    expect(ship.currentPort).toBe(calais);
+    expect(ship.currentPort).toEqual(calais);
+    expect(calais.addShip).toHaveBeenCalledWith(ship);
   });
 });
